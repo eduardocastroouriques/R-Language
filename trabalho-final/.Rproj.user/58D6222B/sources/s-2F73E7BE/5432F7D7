@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559604535609.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3784213928",
+    "id" : "5432F7D7",
+    "lastKnownWriteTime" : 1559614382,
+    "last_content_update" : 1559614382162,
+    "path" : "~/Documents/uniritter/trabalho-final/gasto_por_governo_dilma.R",
+    "project_path" : "gasto_por_governo_dilma.R",
+    "properties" : {
+        "cursorPosition" : "51,0",
+        "scrollLine" : "39",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,61 @@
+library("dplyr")
+#%>%
+library("tidyr")
+#datas
+library("lubridate")
+library("forecast")
+library("ggplot2")
+library("stringr")
+library("plyr")
+
+db <- readRDS('data/gastos_cartao.RDS')
+
+#converte string para date, cria coluna mes
+# 11/2013 - 02/2019
+db_convertido <- db %>%
+  mutate(data_transacao = dmy(data_transacao),
+         mes = month(data_transacao),
+         ano = year(data_transacao),
+         presidente = ifelse(data_transacao <= "2016-08-31", "Dilma", "Temer")) %>%
+  arrange(ano, mes)
+
+#db dilma e db temer
+db_dilma_e_temer <- db_convertido %>%
+  select(data_transacao, valor_transacao, presidente) %>%
+  filter(data_transacao < as.Date("2016-01-01") | 
+           data_transacao > as.Date("2016-12-31") )
+
+db_dilma_2016 <- db_convertido %>%
+  select(data_transacao, valor_transacao) %>%
+  filter(data_transacao >= as.Date("2016-1-01") & 
+           data_transacao <= as.Date("2016-08-31")) %>%
+  mutate(presidente = "Dilma")
+
+db_temer_2016 <- db_convertido %>%
+  select(data_transacao, valor_transacao) %>%
+  filter(data_transacao >= as.Date("2016-09-01") & 
+           data_transacao <= as.Date("2016-12-31")) %>%
+  mutate(presidente = "Temer")
+
+resumo <- aggregate(db_dilma_e_temer$valor_transacao, by=list(data_transacao=db_dilma_e_temer$data_transacao, presidente = db_dilma_e_temer$presidente), FUN=sum)
+added_temer <- join(resumo, db_temer_2016, by = NULL, type = "full", match = "all")
+added_dilma <- join(db_temer_2016, db_dilma_2016, by = NULL, type = "full", match = "all")
+db_dilma_e_temer_somatorio <- join(added_dilma, resumo, by = NULL, type = "full", match = "all")
+
+db_dilma_e_temer <- db_dilma_e_temer %>%
+  mutate(ano_mes = paste(year(data_transacao), month(data_transacao), sep = "/")) %>%
+  arrange(data_transacao)
+
+
+db_dilma_e_temer %>%
+  filter(presidente %in% c("Dilma", "Temer")) %>%
+  ggplot(aes(x = ano_mes, y = valor_transacao)) +
+  geom_line(aes(colour = presidente))
+
+
+ggplot(db_dilma_e_temer) +
+  geom_bar(aes(x=,y=reads),stat="identity") +
+  scale_y_log10()
+
+
+

@@ -1,0 +1,7 @@
+"0","library(dplyr)"
+"0","library(highcharter)"
+"0","library(leaflet)"
+"0","library(spData)"
+"0","library(sf)"
+"2","Error in library(sf) : there is no package called ‘sf’
+"

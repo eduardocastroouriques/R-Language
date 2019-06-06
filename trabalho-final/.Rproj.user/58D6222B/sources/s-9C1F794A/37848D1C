@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559769875077.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "37848D1C",
+    "lastKnownWriteTime" : 1559604562,
+    "last_content_update" : 1559604562,
+    "path" : "~/Documents/uniritter/trabalho-final/scripts.R",
+    "project_path" : "scripts.R",
+    "properties" : {
+        "cursorPosition" : "34,0",
+        "scrollLine" : "20",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

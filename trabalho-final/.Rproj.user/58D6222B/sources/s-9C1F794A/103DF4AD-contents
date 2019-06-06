@@ -1,0 +1,393 @@
+---
+title: "Relatório sobre a felicidade ao longo do mundo"
+author: "Fernando Luiz de Lima e Cristiano Marques"
+date: "06/2019"
+output: 
+  html_document:
+    theme: "readable" 
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(highcharter)
+library(leaflet)
+library(spData)
+#library(sf)
+```
+
+```{r echo=FALSE, eval=TRUE}
+# felicidade_mundo
+
+worldHappinessDb <- read.csv("cloud/project/Trabalho_Final/data/world_happiness.csv")
+glimpse(worldHappinessDb)
+
+#countriesDb <- read.csv("cloud/project/Trabalho_Final/data/countries.csv")
+# glimpse(countriesDb)
+
+# Years
+years <- worldHappinessDb %>% 
+         arrange(index_year) %>% 
+         distinct(index_year)
+
+# Top function
+topCountries <- function(top, year, direction) {
+  
+  results <- worldHappinessDb %>%
+             mutate(name = as.character(name)) %>% 
+             left_join(
+                countriesDb %>% mutate(name = as.character(name)),
+                by = c('name')
+             ) %>%
+             left_join(
+              (spData::world %>% st_as_sf() %>% mutate(name = as.character(name_long))),
+              by = c('name')
+             ) %>%
+             group_by(name) %>%
+             filter(index_year == year)
+  
+  if (direction == 'asc') {
+    results <- results %>% arrange(happiness_score, name)
+  } else if (direction == 'desc') {
+    results <- results %>% arrange(desc(happiness_score), name)
+  }
+  
+  results <- results %>% head(top)
+  
+  return(results)
+}
+
+# Map function
+map <- function(df) {
+  
+  leaflet(data = df) %>%
+    addTiles() %>%
+    addMarkers(lng   = ~longitudes,
+               lat   = ~latitudes,
+               popup = ~as.character(names))
+}
+```
+# Menu
+
+## Introdução
+
+Atualmente vivemos em um mundo onde há um infinito de diferenças entre os países existentes e embora sejamos parecidos como ser humanos, muitas vezes nos sentimos felizes/infelizes por algum certo motivo ou apenas por estarmos em algum lugar que nos sentimos bem. Com o intuito de analisar a felicidade ao longo do mundo, um set de dados será analisado e algumas variáveis serão consideradas com o propósito de obter algumas respostas relacionadas a felicidade ao longo do mundo. A seguir algumas análises que foram desenvolvidas a partir deste set de dados.
+ 
+## Dados
+
+O set de dados utilizado possui dados de todos os países entre o período de 2015 e 2017. Há também um indicador que indica a felicidade por país e diversas outros dados que indicam o motivo pelo qual um país possui um indicador de felicidade alto ou baixo.
+
+## Análise 1 (Top 10 países mais felizes 2015)
+
+Uma breve análise revelou que os 10 países mais felizes do mundo em 2015 foram:
+<ol>
+  <li>Switzerland</li>
+  <li>Iceland</li>
+  <li>Denmark</li>
+  <li>Norway</li>
+  <li>Canada</li>
+  <li>Finland</li>
+  <li>Netherlands</li>
+  <li>Sweden</li>
+  <li>New Zealand</li>
+  <li>Australia</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2015.
+```{r echo=FALSE, eval=TRUE}
+top2015 <- topCountries(10, 2015, 'desc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+top2015 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais felizes do mundo em 2015 possuiam o indicador de felicidade acima de 7.
+
+
+O mapa abaixo mostra os países mais felizes do mundo no ano de 2015.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = top2015$latitude, longitudes = top2015$longitude, names = top2015$name))
+```
+
+## Análise 2 (Top 10 países mais infelizes 2015)
+
+Uma breve análise revelou que os 10 países mais infelizes do mundo em 2015 foram:
+
+<ol>
+  <li>Togo</li>
+  <li>Burundi</li>
+  <li>Syria</li>
+  <li>Benin</li>
+  <li>Rwanda</li>
+  <li>Afghanistan</li>
+  <li>Burkina Faso</li>
+  <li>Guinea</li>
+  <li>Chad</li>
+  <li>Central African Republic</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2015.
+```{r echo=FALSE, eval=TRUE}
+bottom2015 <- topCountries(10, 2015, 'asc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+bottom2015 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais infelizes do mundo em 2015 possuiam o indicador de felicidade abaixo de 4.
+
+
+O mapa abaixo mostra os países mais infelizes do mundo no ano de 2015.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = bottom2015$latitude, longitudes = bottom2015$longitude, names = bottom2015$name))
+```
+
+## Análise 3 (Top 10 países mais felizes 2016)
+
+Uma breve análise revelou que os 10 países mais felizes do mundo em 2016 foram:
+<ol>
+  <li>Denmark</li>
+  <li>Switzerland</li>
+  <li>Iceland</li>
+  <li>Norway</li>
+  <li>Finland</li>
+  <li>Canada</li>
+  <li>Netherlands</li>
+  <li>New Zealand</li>
+  <li>Australia</li>
+  <li>Sweden</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2016.
+```{r echo=FALSE, eval=TRUE}
+top2016 <- topCountries(10, 2016, 'desc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+top2016 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais felizes do mundo em 2016 possuiam o indicador de felicidade acima de 7.
+
+
+O mapa abaixo mostra os países mais felizes do mundo no ano de 2016.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = top2016$latitude, longitudes = top2016$longitude, names = top2016$name))
+```
+
+## Análise 4 (Top 10 países mais infelizes 2016)
+
+Uma breve análise revelou que os 10 países mais infelizes do mundo em 2016 foram:
+
+<ol>
+  <li>Burundi</li>
+  <li>Syria</li>
+  <li>Togo</li>
+  <li>Afghanistan</li>
+  <li>Benin</li>
+  <li>Rwanda</li>
+  <li>Guinea</li>
+  <li>Liberia</li>
+  <li>Tanzania</li>
+  <li>Madagascar</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2016.
+```{r echo=FALSE, eval=TRUE}
+bottom2016 <- topCountries(10, 2016, 'asc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+bottom2016 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais infelizes do mundo em 2016 possuiam o indicador de felicidade abaixo de 4.
+
+
+O mapa abaixo mostra os países mais infelizes do mundo no ano de 2016.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = bottom2016$latitude, longitudes = bottom2016$longitude, names = bottom2016$name))
+```
+
+## Análise 5 (Top 10 países mais felizes 2017)
+
+Uma breve análise revelou que os 10 países mais felizes do mundo em 2017 foram:
+<ol>
+  <li>Norway</li>
+  <li>Denmark</li>
+  <li>Iceland</li>
+  <li>Switzerland</li>
+  <li>Finland</li>
+  <li>Netherlands</li>
+  <li>Canada</li>
+  <li>New Zealand</li>
+  <li>Australia</li>
+  <li>Sweden</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+top2017 <- topCountries(10, 2017, 'desc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+top2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais felizes do mundo em 2017 possuiam o indicador de felicidade acima de 7.
+
+O gráfico abaixo mostra o indicador de liberadade financeira x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador liberadade financeira: {point.financial_freedom}<br/>")
+
+top2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = financial_freedom,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais felizes do mundo em 2017 possuiam o indicador de liberadade financeira acima de 60.
+
+O gráfico abaixo mostra o indicador de direito de propriedades x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador liberadade financeira: {point.property_rights}<br/>")
+
+top2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = property_rights,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais felizes do mundo em 2017 possuiam o indicador de direito de propriedades acima de 81.
+
+O mapa abaixo mostra os países mais felizes do mundo no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = top2017$latitude, longitudes = top2017$longitude, names = top2017$name))
+```
+
+## Análise 6 (Top 10 países mais infelizes 2017)
+
+Uma breve análise revelou que os 10 países mais infelizes do mundo em 2017 foram:
+
+<ol>
+  <li>Central African Republic</li>
+  <li>Burundi</li>
+  <li>Tanzania</li>
+  <li>Syria</li>
+  <li>Rwanda</li>
+  <li>Togo</li>
+  <li>Guinea</li>
+  <li>Liberia</li>
+  <li>Yemen</li>
+  <li>Haiti</li>
+</ol> 
+
+O gráfico abaixo mostra o indicador de felicidade x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+bottom2017 <- topCountries(10, 2017, 'asc')
+
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador felicidade: {point.happiness_score}<br/>")
+bottom2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = happiness_score,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais infelizes do mundo em 2017 possuiam o indicador de felicidade abaixo de 4.
+
+O gráfico abaixo mostra o indicador de liberadade financeira x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador liberadade financeira: {point.financial_freedom}<br/>")
+
+bottom2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = financial_freedom,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais infelizes do mundo em 2017 possuiam o indicador de liberadade financeira abaixo de 50.
+
+O gráfico abaixo mostra o indicador de direito de propriedades x país no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+tooltip <- c("<br/>País: <b>{point.name}</b><br/>
+              <br/>Indicador liberadade financeira: {point.property_rights}<br/>")
+
+bottom2017 %>%
+  hchart(
+    type = "column",
+    hcaes(x     = name,
+          y     = property_rights,
+          color = name
+      )
+  ) %>%
+  hc_tooltip(pointFormat = tooltip)
+```
+Podemos concluir que os países mais infelizes do mundo em 2017 possuiam o indicador de direito de propriedades abaixo de 65.
+
+O mapa abaixo mostra os países mais infelizes do mundo no ano de 2017.
+```{r echo=FALSE, eval=TRUE}
+map(data.frame(latitudes  = bottom2017$latitude, longitudes = bottom2017$longitude, names = bottom2017$name))
+```
+
+## Conclusão
+Algumas análises apresentadas levaram em consideração no máximo 10 países para que seja possível ver a diferença entre os países mais felizes e os mais infelizes, em dados. Um grande fator apresentado é que ao longo dos 3 anos os países mais felizes estão localizados em grande maioria na Europa, enquanto ao longo dos 3 anos os países mais infelizes estão localizados na grande maioria na África e Ásia. Para o ano de 2017 outros dados foram apresentados com a justificativa de que é o ano com dados mais atuais, portanto podemos ter uma ideia dos indicadores de felicidade ao longo do mundo no ano de 2019. Indicadores mais revelantes como indicador de liberade financeira e inidcador de direito de propriedades foram escolhidos para serem apresentados e também revelar o fato que países com uma economia mais avançada tende a ter uma população mais feliz do que outros países onde a economia é mais escassa.
+

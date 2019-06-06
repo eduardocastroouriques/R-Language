@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559779500329.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "DA67415E",
+    "lastKnownWriteTime" : 1559779718,
+    "last_content_update" : 1559779718041,
+    "path" : "~/Documents/uniritter/trabalho-final/temer.R",
+    "project_path" : "temer.R",
+    "properties" : {
+        "cursorPosition" : "52,26",
+        "scrollLine" : "26",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

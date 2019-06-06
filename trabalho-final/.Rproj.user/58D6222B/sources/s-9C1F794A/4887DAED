@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1559780163360.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4887DAED",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1559780163360,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "21F4E99A",
+        "caption" : "nome_orgao_x_contagem",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=nome_orgao_x_contagem&cache_key=21F4E99A",
+        "displayedObservations" : 18,
+        "environment" : "",
+        "object" : "nome_orgao_x_contagem",
+        "preview" : 0,
+        "totalObservations" : 18,
+        "variables" : 2
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
